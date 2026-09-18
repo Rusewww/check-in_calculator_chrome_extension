@@ -1,0 +1,395 @@
+/*
+ * The 380px-wide popup layout layer over ../ui/styles.css (mockup 1e). Nothing
+ * here redefines a colour, font or component — it only fits the website's
+ * existing single-column path into the popup: a 380px width, a compact
+ * single-row header and an auto-sizing height, so the whole popup is visible
+ * with no scrolling in the common case (content only scrolls if it would ever
+ * exceed Chrome's own 600px popup cap). See ARCHITECTURE-ESSENTIAL.md §5.4 and
+ * PRF.md §4.1 for the deviations (D-1..D-5) this file is responsible for.
+ */
+
+/* ---------- Self-hosted fonts (NFR-5/NFR-8: no Google Fonts request, Cyrillic covered) ---------- */
+
+@font-face {
+  font-family: 'Geist';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/geist-sans-400.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Geist';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/geist-sans-500.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Geist';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/geist-sans-600.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Geist';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/geist-sans-700.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Geist Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/geist-mono-400.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Geist Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/geist-mono-500.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Geist Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/geist-mono-600.woff2') format('woff2');
+}
+
+/* ---------- 380px-wide shell, auto height up to Chrome's 600px popup cap ---------- */
+
+html {
+  width: 380px;
+}
+
+/* No fixed height: Chrome sizes the popup window to the document's natural
+   height, so the common case shows everything with no scrollbar at all. The
+   max-height + overflow-y is only a safety net for the rare content that would
+   otherwise exceed Chrome's own 600px cap (a long error banner, an open
+   airport list, wrapped presets) — auto shows a scrollbar only if that's ever
+   actually reached. */
+body {
+  width: 380px;
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.app {
+  max-width: none;
+  width: 380px;
+  min-height: 0;
+}
+
+/* The website's own responsive rules (>=960px/640px breakpoints) key off the
+   viewport, which in a real popup window is always this narrow — override
+   the ones that don't fit the mockup's single-row header instead of letting
+   them apply by accident. */
+.topbar {
+  flex: 0 0 auto;
+  flex-wrap: nowrap;
+  gap: 8px;
+  padding: 8px 12px;
+}
+
+.brand {
+  font-size: 12.5px;
+  gap: 6px;
+}
+
+.brand-mark {
+  width: 18px;
+  height: 18px;
+  flex: none;
+}
+
+.topbar-controls {
+  flex: none;
+  gap: 6px;
+}
+
+.segmented {
+  padding: 2px;
+  gap: 1px;
+}
+
+.seg-btn {
+  padding: 4px 8px;
+  font-size: 11px;
+  min-height: 24px;
+}
+
+.topbar .lang-btn {
+  min-width: 32px;
+  min-height: 24px;
+  padding: 0 6px;
+}
+
+/* The website's two-column layout only ever applied at >=900px, so at 380px this
+   already renders as a single column (D-1's chip wrap simply falls out of that
+   narrower width, unchanged from styles.css's own flex-wrap on .presets). */
+.layout {
+  display: block;
+  padding: 10px 16px;
+}
+
+.banner {
+  margin: 12px 16px 0;
+}
+
+.panel {
+  padding: 8px;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.section {
+  gap: 4px;
+}
+
+.result-col {
+  gap: 8px;
+}
+
+/* Compact field metrics throughout — the website sized these for a mouse and
+   a whole viewport; the popup needs the whole answer to fit in Chrome's
+   600px cap with no scrolling in the common case. */
+.search,
+.ticket {
+  min-height: 38px;
+  padding: 5px 12px;
+}
+
+.ticket-code {
+  font-size: 20px;
+}
+
+.zone-row {
+  margin-top: -3px;
+}
+
+/* The inner label is hidden (§6.2), so the box only ever shows one line. */
+.dt-box {
+  min-height: 30px;
+  padding: 4px 12px;
+}
+
+.dt-box input {
+  font-size: 14px;
+}
+
+.preset,
+.custom-box,
+.input {
+  min-height: 30px;
+}
+
+/* All five Hours/Days presets plus the custom box fit on one row at 380px
+   once each chip's own basis is trimmed — avoids the second row a plain
+   flex-wrap would otherwise force (PRF's D-1 wrap is still available should a
+   translation ever need it; this only tightens the common English/short-label
+   case so the whole popup fits Chrome's 600px cap with no scrolling). */
+.presets {
+  gap: 4px;
+}
+
+.preset {
+  flex: 1 1 2.6em;
+  padding: 0 2px;
+}
+
+.custom-box {
+  flex: 1 1 4em;
+  font-size: 13px;
+  padding: 0 6px;
+}
+
+.checkbox-row {
+  min-height: 26px;
+}
+
+/* D-4: no footer in the popup — 600px is tight, and attribution ships in the
+   package instead (data/airports.meta.json, THIRD-PARTY-NOTICES.md, the listing). */
+.app-footer,
+.footnote {
+  display: none;
+}
+
+/* §6.4: the "As airport" checkbox sits on the same line as the zone select. */
+.section--divided {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: 10px;
+  row-gap: 6px;
+  padding-top: 10px;
+}
+
+.section--divided .eyebrow {
+  flex-basis: 100%;
+}
+
+.section--divided #zone-select {
+  /* basis 0, not auto: .input's width:100% would otherwise become the flex
+     basis and claim the whole row before the checkbox gets a chance to share it. */
+  flex: 1 1 0%;
+  width: auto;
+  min-width: 0;
+}
+
+.section--divided .checkbox-row {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+/* §6.2: the date/time boxes lose their inner labels visually; the label element
+   still carries the accessible name (clip, not display:none, keeps it in the
+   accessible-name computation). */
+.dt-label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* D-5: two cells in the stub, not three — the countdown that matters is already
+   in the band, so the "departs in" cell is dropped. */
+.pass .stub {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.pass .stub > div:nth-child(3) {
+  display: none;
+}
+
+/* The boarding pass, condensed: the website sized this as a hero result on its
+   own page; the popup needs it to share ~600px with the inputs above it. */
+.pass-band {
+  padding: 6px 12px;
+}
+
+.pass-hero {
+  padding: 8px 16px 6px;
+  gap: 6px 16px;
+}
+
+.hero-label {
+  margin-bottom: 2px;
+}
+
+.hero-date {
+  margin-bottom: 2px;
+}
+
+.hero-time {
+  font-size: clamp(32px, 10vw, 40px);
+}
+
+.hero-side {
+  padding-bottom: 1px;
+}
+
+.hero-side-time {
+  font-size: 22px;
+}
+
+.tear {
+  height: 12px;
+}
+
+.tear-line {
+  top: 5px;
+}
+
+.tear-notch {
+  width: 12px;
+  height: 12px;
+}
+
+.tear-notch-l {
+  left: -6px;
+}
+
+.tear-notch-r {
+  right: -6px;
+}
+
+.stub {
+  padding: 6px 16px 8px;
+  gap: 10px;
+}
+
+.stub-value {
+  font-size: 13px;
+}
+
+.notice {
+  margin: 0 16px 14px;
+  padding: 8px 10px;
+}
+
+/* Action bar above a divider at the bottom of the popup (region 8). Normally the
+   whole popup fits with no scrolling and this just sits at the natural end of
+   the content; sticky only matters as a graceful fallback if content ever
+   exceeds Chrome's 600px cap and `body` starts scrolling, so the actions stay
+   reachable rather than sliding out of view. */
+.actions {
+  position: sticky;
+  bottom: 0;
+  flex-wrap: nowrap;
+  /* No top margin: .result-col's own gap already separates this from the pass
+     above it — an extra margin here would just double that space. Bottom/side
+     margins bleed to .layout's own padding so the bar reaches the edges. */
+  margin: 0 -16px -10px;
+  padding: 6px 16px calc(6px + env(safe-area-inset-bottom, 0px));
+  background: var(--bg);
+  border-top: 1px solid var(--border);
+}
+
+.actions .btn {
+  padding: 0 14px;
+  min-height: 36px;
+}
+
+.actions .btn:first-child {
+  flex: 1 1 auto;
+}
+
+/* D-2: a third, icon-sized "Copy link" button after .ics. The label text stays in
+   the DOM (still the accessible name and the "Copied"/"Copy failed" feedback for
+   assistive tech) — only the icon shows visually, via a mask so it follows
+   currentColor in both themes. */
+.actions .btn:last-child {
+  flex: 0 0 auto;
+  width: 36px;
+  padding: 0;
+  font-size: 0;
+  position: relative;
+}
+
+.actions .btn:last-child::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 18px;
+  height: 18px;
+  background-color: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10 14a3.5 3.5 0 0 0 5 0l3-3a3.5 3.5 0 0 0-5-5l-1 1'/%3E%3Cpath d='M14 10a3.5 3.5 0 0 0-5 0l-3 3a3.5 3.5 0 0 0 5 5l1-1'/%3E%3C/svg%3E")
+    center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10 14a3.5 3.5 0 0 0 5 0l3-3a3.5 3.5 0 0 0-5-5l-1 1'/%3E%3Cpath d='M14 10a3.5 3.5 0 0 0-5 0l-3 3a3.5 3.5 0 0 0 5 5l1-1'/%3E%3C/svg%3E")
+    center / contain no-repeat;
+}
+
+/* Native pickers (AT-9) and dropdowns must stay usable inside the fixed-size
+   popup rather than being clipped by it. */
+.lang-menu {
+  max-height: 260px;
+  overflow-y: auto;
+}

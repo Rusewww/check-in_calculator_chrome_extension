@@ -1,0 +1,12 @@
+dist
+dist-extension
+node_modules
+coverage
+test-results
+playwright-report
+public/data
+package-lock.json
+
+# Reference-only spec documents kept outside the project (not committed)
+PRF.md
+ARCHITECTURE-ESSENTIAL.md

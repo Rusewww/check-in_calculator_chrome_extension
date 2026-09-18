@@ -1,0 +1,46 @@
+{
+  "name": "check-in-calculator",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Chrome extension: find out exactly when online check-in opens for your flight, in the airport's time zone and in yours.",
+  "type": "module",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "tsc -p jsconfig.json",
+    "data:build": "node scripts/build-airports.mjs",
+    "build:icons": "node scripts/build-icons.mjs",
+    "build:fonts": "node scripts/build-fonts.mjs",
+    "package:zip": "node scripts/package-zip.mjs",
+    "check": "npm run lint && npm run format:check && npm run typecheck && npm run test && npm run build && npm run package:zip"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.63.0",
+    "@types/chrome": "^0.3.0",
+    "@types/node": "^22.19.0",
+    "archiver": "^8.0.0",
+    "chrome-webstore-upload-cli": "^4.0.1",
+    "eslint": "^10.10.0",
+    "eslint-config-prettier": "^10.1.8",
+    "geist": "^1.7.2",
+    "geo-tz": "^8.1.8",
+    "globals": "^17.12.0",
+    "prettier": "^3.9.6",
+    "sharp": "^0.35.4",
+    "subset-font": "^2.7.0",
+    "typescript": "^5.9.3",
+    "vite": "^8.3.0",
+    "vitest": "^5.0.0"
+  }
+}

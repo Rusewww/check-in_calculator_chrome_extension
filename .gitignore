@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+dist-extension/
+.vite/
+/check-in-calculator-*.zip
+
+# Test output
+coverage/
+test-results/
+playwright-report/
+
+# Editor / OS
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.claude/launch.json
+.DS_Store
+Thumbs.db
+
+# Local env files
+.env
+.env.*
+!.env.example
+
+# Reference-only spec documents kept outside the project (not committed)
+/PRF.md
+/ARCHITECTURE-ESSENTIAL.md

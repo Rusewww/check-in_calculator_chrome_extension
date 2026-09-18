@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 208 208" width="208" height="208">
+  <title>Check-in Calculator</title>
+  <defs><clipPath id="tile"><rect width="208" height="208" rx="56"/></clipPath></defs>
+  <rect width="208" height="208" rx="56" fill="#a87dff"/>
+  <g clip-path="url(#tile)">
+    <polygon points="22,131 300,4 128,157" fill="#17140f"/>
+    <polygon points="128,157 300,4 340,80 200,249" fill="#5b4a8f"/>
+  </g>
+</svg>

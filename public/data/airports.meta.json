@@ -1,0 +1,55 @@
+{
+  "generated": "2026-09-13T15:48:44.984Z",
+  "count": 9055,
+  "scheduledService": 4133,
+  "timeZoneSources": {
+    "mwgg": 7803,
+    "geo-tz": 1252
+  },
+  "fields": [
+    "iata",
+    "icao",
+    "name",
+    "city",
+    "region",
+    "country",
+    "countryCode",
+    "tz",
+    "lat",
+    "lon",
+    "type",
+    "scheduled"
+  ],
+  "typeCodes": {
+    "large_airport": "L",
+    "medium_airport": "M",
+    "small_airport": "S",
+    "seaplane_base": "P",
+    "heliport": "H",
+    "balloonport": "B"
+  },
+  "sources": [
+    {
+      "name": "OurAirports",
+      "url": "https://davidmegginson.github.io/ourairports-data/airports.csv",
+      "license": "Public domain (Unlicense)",
+      "homepage": "https://ourairports.com/data/"
+    },
+    {
+      "name": "mwgg/Airports",
+      "url": "https://raw.githubusercontent.com/mwgg/Airports/master/airports.json",
+      "license": "MIT",
+      "homepage": "https://github.com/mwgg/Airports"
+    },
+    {
+      "name": "geo-tz",
+      "url": "https://www.npmjs.com/package/geo-tz",
+      "license": "MIT",
+      "homepage": "https://github.com/evansiroky/node-geo-tz"
+    }
+  ],
+  "notices": {
+    "mwgg/Airports": "The MIT License (MIT)\n\nCopyright (c) 2014 mwgg\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the \"Software\"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all\ncopies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\nSOFTWARE.",
+    "OurAirports": "Released into the public domain by OurAirports contributors."
+  }
+}

@@ -1,0 +1,48 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run check
+      - name: Attach the zip to a GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: check-in-calculator-*.zip
+          draft: true
+          generate_release_notes: true
+
+      # Optional: upload to the Chrome Web Store as a draft — a human still
+      # presses publish. Needs CHROME_EXTENSION_ID, CHROME_CLIENT_ID,
+      # CHROME_CLIENT_SECRET and CHROME_REFRESH_TOKEN as repository secrets;
+      # skipped entirely until they're set (first submission is manual anyway,
+      # see ARCHITECTURE-ESSENTIAL.md §9).
+      - name: Upload draft to the Chrome Web Store
+        if: ${{ secrets.CHROME_EXTENSION_ID != '' }}
+        env:
+          EXTENSION_ID: ${{ secrets.CHROME_EXTENSION_ID }}
+          CLIENT_ID: ${{ secrets.CHROME_CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.CHROME_CLIENT_SECRET }}
+          REFRESH_TOKEN: ${{ secrets.CHROME_REFRESH_TOKEN }}
+        run: |
+          zip_file=$(ls check-in-calculator-*.zip | head -n1)
+          npx chrome-webstore-upload-cli upload \
+            --source "$zip_file" \
+            --extension-id "$EXTENSION_ID" \
+            --client-id "$CLIENT_ID" \
+            --client-secret "$CLIENT_SECRET" \
+            --refresh-token "$REFRESH_TOKEN"

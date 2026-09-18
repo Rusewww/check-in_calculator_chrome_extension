@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 208 208">
+  <style>
+    :root { --bg: #6a35e0; --plane: #ffffff; --fold: #b39ae6; }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg: #a87dff; --plane: #17140f; --fold: #5b4a8f; }
+    }
+  </style>
+  <defs><clipPath id="tile"><rect width="208" height="208" rx="56"/></clipPath></defs>
+  <rect width="208" height="208" rx="56" fill="var(--bg)"/>
+  <g clip-path="url(#tile)">
+    <polygon points="22,131 300,4 128,157" fill="var(--plane)"/>
+    <polygon points="128,157 300,4 340,80 200,249" fill="var(--fold)"/>
+  </g>
+</svg>
