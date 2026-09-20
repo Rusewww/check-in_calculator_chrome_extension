@@ -37,6 +37,12 @@ export const test = base.extend({
   context: async ({ userDataDir }, use) => {
     const context = await chromium.launchPersistentContext(userDataDir, {
       headless: false,
+      // English is locale-sensitive here (resolveLocale keeps the browser's
+      // own English variant, per FR "so US users keep US formats" — see
+      // settings.js), so without pinning this, date assertions like "4 Oct"
+      // vs "Oct 4" pass or fail depending on the machine's default Chrome
+      // locale rather than on the extension's own behaviour.
+      locale: 'en-GB',
       args: [`--disable-extensions-except=${DIST_DIR}`, `--load-extension=${DIST_DIR}`],
     });
     await use(context);
