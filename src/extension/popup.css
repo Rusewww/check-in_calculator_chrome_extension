@@ -78,12 +78,14 @@
    makes it moot. The actual content (see the section paddings/sizes below)
    stays well under this in every supported language, with room to spare
    rather than hugging the edge — the guarantee here is structural, not just
-   "small enough today". 596, not 600: a hair under Chrome's own cap as a
-   margin of safety. */
+   "small enough today". 600 is Chrome's own documented cap; there's no
+   spare millimetre to give back once the tallest realistic case (a very
+   different display zone, a long localized date) is accounted for, so this
+   uses all of it rather than leaving a few px unused. */
 html,
 body {
   width: 380px;
-  height: 596px;
+  height: 600px;
   overflow: hidden;
 }
 
@@ -91,7 +93,7 @@ body {
   position: relative;
   max-width: none;
   width: 380px;
-  height: 596px;
+  height: 600px;
   min-height: 0;
   overflow: hidden;
 }
@@ -151,7 +153,7 @@ body {
    for a bar that just needs to sit at a fixed spot). */
 .layout {
   display: block;
-  padding: 10px 16px 64px;
+  padding: 10px 16px 50px;
 }
 
 .banner {
@@ -159,9 +161,9 @@ body {
 }
 
 .panel {
-  padding: 8px;
-  gap: 5px;
-  margin-bottom: 8px;
+  padding: 7px;
+  gap: 4px;
+  margin-bottom: 6px;
 }
 
 .section {
@@ -320,8 +322,8 @@ body {
 }
 
 .pass-hero {
-  padding: 6px 16px 4px;
-  gap: 4px 16px;
+  padding: 3px 16px 2px;
+  gap: 2px 16px;
 }
 
 .hero-label {
@@ -334,15 +336,24 @@ body {
 }
 
 .hero-time {
-  font-size: clamp(28px, 9vw, 36px);
+  font-size: clamp(24px, 8vw, 32px);
 }
 
+/* This grid stacks into two rows below 640px (styles.css's own breakpoint,
+   which a 380px-wide popup always matches) whenever the display zone differs
+   from the airport's — a large offset (e.g. Pacific/Tongatapu) plus a longer
+   localized label made this the single tallest state actually seen, worth
+   its own tighter sizing rather than sharing .hero-time's. */
 .hero-side {
   padding-bottom: 1px;
 }
 
 .hero-side-time {
-  font-size: 22px;
+  font-size: 18px;
+}
+
+.hero-side-note {
+  font-size: 11px;
 }
 
 .tear {
@@ -367,12 +378,18 @@ body {
 }
 
 .stub {
-  padding: 5px 16px 6px;
+  padding: 3px 16px 4px;
   gap: 10px;
 }
 
+/* Line-height, not just font-size: styles.css's 1.45 body line-height is
+   generous for a two-line stat like a localized "Do., 17. Sept. · 23:40",
+   which wraps inside the stub's half-width cell in German (longer month
+   abbreviations than English) — tightening it keeps that wrap from costing
+   as much height as it otherwise would. */
 .stub-value {
-  font-size: 12px;
+  font-size: 11px;
+  line-height: 1.25;
 }
 
 .notice {
