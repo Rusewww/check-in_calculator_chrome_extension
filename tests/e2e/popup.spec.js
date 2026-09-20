@@ -92,4 +92,30 @@ test.describe('popup', () => {
     await expect(page.getByPlaceholder(/IATA code/)).toBeHidden();
     await page.close();
   });
+
+  test('a date typed before the time survives picking a check-in window', async ({
+    context,
+    extensionId,
+  }) => {
+    // Regression test: DepartureField.js used to re-sync both native inputs
+    // from state.departure on every store change. state.departure is '' while
+    // the date/time pair is incomplete (by design, FR-3.3), so filling in
+    // just the date and then clicking a preset — an unrelated store update —
+    // wiped the date box back to empty the moment focus moved off it.
+    const page = await context.newPage();
+    await page.goto(`chrome-extension://${extensionId}/popup.html`);
+    await page.getByPlaceholder(/IATA code/).fill('LHR');
+    await page.getByRole('option', { name: /London Heathrow/ }).click();
+
+    await page.locator('#departure-date').fill('2026-10-04');
+    // Time is deliberately left empty here.
+    await page.getByRole('button', { name: '36' }).click();
+
+    await expect(page.locator('#departure-date')).toHaveValue('2026-10-04');
+    await expect(page.locator('#departure-time')).toHaveValue('');
+
+    await page.locator('#departure-time').fill('14:30');
+    await expect(page.locator('.hero-time')).toHaveText('02:30');
+    await page.close();
+  });
 });

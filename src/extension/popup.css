@@ -2,9 +2,9 @@
  * The 380px-wide popup layout layer over ../ui/styles.css (mockup 1e). Nothing
  * here redefines a colour, font or component — it only fits the website's
  * existing single-column path into the popup: a 380px width, a compact
- * single-row header and an auto-sizing height, so the whole popup is visible
- * with no scrolling in the common case (content only scrolls if it would ever
- * exceed Chrome's own 600px popup cap). See ARCHITECTURE-ESSENTIAL.md §5.4 and
+ * single-row header, and every section trimmed to comfortably clear Chrome's
+ * ~600px popup cap with real margin to spare, so the whole popup is always
+ * visible with no scrolling at all. See ARCHITECTURE-ESSENTIAL.md §5.4 and
  * PRF.md §4.1 for the deviations (D-1..D-5) this file is responsible for.
  */
 
@@ -66,16 +66,19 @@ html {
   width: 380px;
 }
 
-/* No fixed height: Chrome sizes the popup window to the document's natural
-   height, so the common case shows everything with no scrollbar at all. The
-   max-height + overflow-y is only a safety net for the rare content that would
-   otherwise exceed Chrome's own 600px cap (a long error banner, an open
-   airport list, wrapped presets) — auto shows a scrollbar only if that's ever
-   actually reached. */
+/* No height or overflow rule at all: Chrome sizes the popup window to the
+   document's natural height (and re-sizes it as that changes, e.g. once the
+   boarding pass appears) — but only while the page's own scrolling elements
+   don't intercept that. Giving `body` its own overflow/max-height, as an
+   earlier version of this file did, opts it out of that entirely: Chrome then
+   treats `body` as self-managing its own overflow and stops resizing the
+   window, so it opens at whatever size the popup happened to be at that
+   moment and everything past that scrolls inside a body that never grows.
+   The fix is to let height stay fully intrinsic here and instead keep the
+   layout itself comfortably under Chrome's ~600px popup cap (see the
+   individual section paddings/sizes below). */
 body {
   width: 380px;
-  max-height: 600px;
-  overflow-y: auto;
 }
 
 .app {
@@ -92,7 +95,7 @@ body {
   flex: 0 0 auto;
   flex-wrap: nowrap;
   gap: 8px;
-  padding: 8px 12px;
+  padding: 6px 12px;
 }
 
 .brand {
@@ -117,14 +120,14 @@ body {
 }
 
 .seg-btn {
-  padding: 4px 8px;
+  padding: 3px 8px;
   font-size: 11px;
-  min-height: 24px;
+  min-height: 22px;
 }
 
 .topbar .lang-btn {
   min-width: 32px;
-  min-height: 24px;
+  min-height: 22px;
   padding: 0 6px;
 }
 
@@ -142,12 +145,12 @@ body {
 
 .panel {
   padding: 8px;
-  gap: 6px;
+  gap: 5px;
   margin-bottom: 8px;
 }
 
 .section {
-  gap: 4px;
+  gap: 3px;
 }
 
 .result-col {
@@ -159,8 +162,16 @@ body {
    600px cap with no scrolling in the common case. */
 .search,
 .ticket {
-  min-height: 38px;
-  padding: 5px 12px;
+  min-height: 34px;
+  padding: 4px 12px;
+}
+
+/* The website sized this input's placeholder for a mouse and a wide column;
+   at 380px and 16px type, the longer Ukrainian and German placeholder text
+   ("Код IATA, аеропорт або місто, напр. KBP", "IATA-Code, Flughafen oder
+   Stadt, z. B. FRA") overflows and gets clipped mid-word. */
+.search input {
+  font-size: 13px;
 }
 
 .ticket-code {
@@ -173,8 +184,8 @@ body {
 
 /* The inner label is hidden (§6.2), so the box only ever shows one line. */
 .dt-box {
-  min-height: 30px;
-  padding: 4px 12px;
+  min-height: 28px;
+  padding: 3px 12px;
 }
 
 .dt-box input {
@@ -184,7 +195,7 @@ body {
 .preset,
 .custom-box,
 .input {
-  min-height: 30px;
+  min-height: 28px;
 }
 
 /* All five Hours/Days presets plus the custom box fit on one row at 380px
@@ -208,7 +219,7 @@ body {
 }
 
 .checkbox-row {
-  min-height: 26px;
+  min-height: 24px;
 }
 
 /* D-4: no footer in the popup — 600px is tight, and attribution ships in the
@@ -225,8 +236,9 @@ body {
   flex-wrap: wrap;
   align-items: center;
   column-gap: 10px;
-  row-gap: 6px;
-  padding-top: 10px;
+  row-gap: 4px;
+  padding-top: 3px;
+  border-top: none;
 }
 
 .section--divided .eyebrow {
@@ -271,24 +283,25 @@ body {
 /* The boarding pass, condensed: the website sized this as a hero result on its
    own page; the popup needs it to share ~600px with the inputs above it. */
 .pass-band {
-  padding: 6px 12px;
+  padding: 5px 12px;
 }
 
 .pass-hero {
-  padding: 8px 16px 6px;
-  gap: 6px 16px;
+  padding: 6px 16px 4px;
+  gap: 4px 16px;
 }
 
 .hero-label {
-  margin-bottom: 2px;
+  margin-bottom: 1px;
 }
 
 .hero-date {
-  margin-bottom: 2px;
+  margin-bottom: 1px;
+  font-size: 11.5px;
 }
 
 .hero-time {
-  font-size: clamp(32px, 10vw, 40px);
+  font-size: clamp(28px, 9vw, 36px);
 }
 
 .hero-side {
@@ -321,12 +334,12 @@ body {
 }
 
 .stub {
-  padding: 6px 16px 8px;
+  padding: 5px 16px 6px;
   gap: 10px;
 }
 
 .stub-value {
-  font-size: 13px;
+  font-size: 12px;
 }
 
 .notice {
@@ -334,27 +347,23 @@ body {
   padding: 8px 10px;
 }
 
-/* Action bar above a divider at the bottom of the popup (region 8). Normally the
-   whole popup fits with no scrolling and this just sits at the natural end of
-   the content; sticky only matters as a graceful fallback if content ever
-   exceeds Chrome's 600px cap and `body` starts scrolling, so the actions stay
-   reachable rather than sliding out of view. */
+/* Action bar above a divider at the bottom of the popup (region 8). Nothing in
+   the popup scrolls (see the note on `body` above), so this is simply the
+   last thing in the content, not actually pinned to anything. */
 .actions {
-  position: sticky;
-  bottom: 0;
   flex-wrap: nowrap;
   /* No top margin: .result-col's own gap already separates this from the pass
      above it — an extra margin here would just double that space. Bottom/side
      margins bleed to .layout's own padding so the bar reaches the edges. */
   margin: 0 -16px -10px;
-  padding: 6px 16px calc(6px + env(safe-area-inset-bottom, 0px));
+  padding: 5px 16px calc(5px + env(safe-area-inset-bottom, 0px));
   background: var(--bg);
   border-top: 1px solid var(--border);
 }
 
 .actions .btn {
   padding: 0 14px;
-  min-height: 36px;
+  min-height: 34px;
 }
 
 .actions .btn:first-child {
@@ -367,7 +376,7 @@ body {
    currentColor in both themes. */
 .actions .btn:last-child {
   flex: 0 0 auto;
-  width: 36px;
+  width: 34px;
   padding: 0;
   font-size: 0;
   position: relative;

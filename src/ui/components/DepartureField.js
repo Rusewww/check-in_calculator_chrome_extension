@@ -73,15 +73,20 @@ export function mountDepartureField(container, { store }) {
 
   /** @param {string} departure */
   function fill(departure) {
-    const active = document.activeElement;
-    if (active === date || active === time) return;
     const nextDate = departure.slice(0, 10);
     const nextTime = departure.slice(11, 16);
     if (date.value !== nextDate) date.value = nextDate;
     if (time.value !== nextTime) time.value = nextTime;
   }
 
-  const unsubscribe = store.subscribe((state) => fill(state.departure));
+  // Restore from the initial state only. `state.departure` is derived FROM
+  // these two inputs (via onChange above) and is '' whenever the pair is
+  // incomplete — e.g. a date typed with no time yet. Re-syncing reactively on
+  // every store change, as this used to, pushed that '' back into whichever
+  // box the user *had* filled in the moment anything else in the popup
+  // changed (say, clicking a check-in-window preset moves focus off both
+  // boxes), wiping out a still-in-progress entry. The two native inputs are
+  // the source of truth for their own display once mounted.
   fill(store.get().departure);
-  return unsubscribe;
+  return () => {};
 }
