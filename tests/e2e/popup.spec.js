@@ -27,7 +27,10 @@ test.describe('popup', () => {
 
     await page.getByPlaceholder(/IATA code/).fill('LHR');
     await page.getByRole('option', { name: /London Heathrow/ }).click();
-    await expect(page.getByText('Europe/London')).toBeVisible();
+    // Not getByText('Europe/London'): that also matches the (hidden) matching
+    // <option> in the zone <select>, a strict-mode violation. The zone chip is
+    // the only element with this class.
+    await expect(page.locator('.chip-mono')).toHaveText('Europe/London');
 
     await page.locator('#departure-date').fill('2026-10-04');
     await page.locator('#departure-time').fill('14:30');
@@ -54,7 +57,11 @@ test.describe('popup', () => {
 
     const second = await context.newPage();
     await second.goto(`chrome-extension://${extensionId}/popup.html`);
-    await expect(second.getByText('LHR')).toBeVisible();
+    // Not getByText('LHR'): harmless today (only the ticket shows the IATA
+    // code while the display zone follows the airport), but the same
+    // substring-match trap as the .chip-mono fix above the moment a different
+    // display zone is in play (the hero's side block also reads "· LHR" then).
+    await expect(second.locator('.ticket-code')).toHaveText('LHR');
     await expect(second.locator('#departure-date')).toHaveValue('2026-10-04');
     await expect(second.locator('#departure-time')).toHaveValue('14:30');
     await expect(second.getByRole('button', { name: '36' })).toHaveAttribute(
@@ -79,7 +86,10 @@ test.describe('popup', () => {
     // picker that dismissed the popup would leave nothing to assert against.
     await date.fill('2026-10-04');
     await expect(date).toHaveValue('2026-10-04');
-    await expect(page.getByPlaceholder(/IATA code/)).toHaveCount(0); // ticket replaced the search box
+    // The search input stays in the DOM (AirportSearch.js only hides its
+    // wrapper), so toHaveCount(0) never passes — toBeHidden() reflects what
+    // "the ticket replaced the search box" actually means here.
+    await expect(page.getByPlaceholder(/IATA code/)).toBeHidden();
     await page.close();
   });
 });
