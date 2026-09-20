@@ -62,10 +62,6 @@
 
 /* ---------- Fixed 380x596 shell (mockup 1e is drawn at 380x600) ---------- */
 
-html {
-  width: 380px;
-}
-
 /* A fixed height, not auto/intrinsic: relying on Chrome to dynamically
    re-size an already-open popup as its content grows (e.g. once the boarding
    pass appears after the dataset loads and fields fill in) turned out not to
@@ -74,10 +70,17 @@ html {
    though the content comfortably fits under its 600px popup cap on its own.
    A static height sidesteps that entirely: it's the same value from the very
    first paint to the last, so there's nothing to "resize" and nothing to
-   race. overflow: hidden guarantees no scrollbar can ever appear; the actual
-   content (see the section paddings/sizes below) stays well under this in
-   every supported language, with room to spare rather than hugging the edge.
-   596, not 600: a hair under Chrome's own cap as a margin of safety. */
+   race. overflow: hidden is set on html AND body AND .app, not just one of
+   them — a popup is a small, self-contained browser viewport, and which
+   element's overflow governs *that* outer scrollbar isn't something this
+   project can rely on matching the ordinary same-origin-page rule (where
+   only the root/body pairing matters); setting it everywhere in the chain
+   makes it moot. The actual content (see the section paddings/sizes below)
+   stays well under this in every supported language, with room to spare
+   rather than hugging the edge — the guarantee here is structural, not just
+   "small enough today". 596, not 600: a hair under Chrome's own cap as a
+   margin of safety. */
+html,
 body {
   width: 380px;
   height: 596px;
@@ -85,10 +88,12 @@ body {
 }
 
 .app {
+  position: relative;
   max-width: none;
   width: 380px;
   height: 596px;
   min-height: 0;
+  overflow: hidden;
 }
 
 /* The website's own responsive rules (>=960px/640px breakpoints) key off the
@@ -138,16 +143,15 @@ body {
 /* The website's two-column layout only ever applied at >=900px, so at 380px this
    already renders as a single column (D-1's chip wrap simply falls out of that
    narrower width, unchanged from styles.css's own flex-wrap on .presets).
-   flex, not block: with the popup's height now fixed (see body/.app above),
-   this needs to stretch to fill the remaining space below the top bar so the
-   action bar can be pinned to the true bottom edge (region 8 of the mockup)
-   rather than sitting wherever the content happens to end. */
+   Bottom padding reserves room for .actions, which is pinned below via
+   position: absolute rather than flex (a flex column here made every child
+   down to .section--divided a flex item that needed its own min-width: 0 to
+   avoid being forced wider than 380px by content like the zone <select> —
+   correct in principle, but a fragile amount of cascading to get right neatly
+   for a bar that just needs to sit at a fixed spot). */
 .layout {
-  display: flex;
-  flex-direction: column;
-  flex: 1 1 auto;
-  min-height: 0;
-  padding: 10px 16px;
+  display: block;
+  padding: 10px 16px 64px;
 }
 
 .banner {
@@ -155,7 +159,6 @@ body {
 }
 
 .panel {
-  flex: 0 0 auto;
   padding: 8px;
   gap: 5px;
   margin-bottom: 8px;
@@ -166,8 +169,6 @@ body {
 }
 
 .result-col {
-  flex: 1 1 auto;
-  min-height: 0;
   gap: 8px;
 }
 
@@ -192,8 +193,11 @@ body {
   font-size: 20px;
 }
 
+/* A little breathing room between the selected airport's ticket and its
+   time-zone chip below it — the previous negative margin (a height-squeezing
+   leftover) pulled them close enough to read as one cramped block. */
 .zone-row {
-  margin-top: -3px;
+  margin-top: 4px;
 }
 
 /* The inner label is hidden (§6.2), so the box only ever shows one line. */
@@ -377,17 +381,18 @@ body {
 }
 
 /* Action bar above a divider at the bottom of the popup (region 8), pinned to
-   the true bottom edge of the fixed-height popup: margin-top: auto consumes
-   whatever space .result-col's flex-stretch leaves above it, the same "push
-   to the end" trick as justify-content: flex-end but scoped to one item. */
+   the true bottom edge of the fixed-height popup via position: absolute
+   (.app is its positioning context) — .layout's bottom padding above reserves
+   this same amount of room so nothing in the normal flow renders underneath
+   it. Absolute, not a flex/margin trick: it never asks .layout's children to
+   be flex items, so nothing about the check-in-window or zone rows can be
+   pushed wider than 380px by that. */
 .actions {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
   flex-wrap: nowrap;
-  margin-top: auto;
-  /* Bottom/side margins bleed to .layout's own padding so the bar reaches
-     the popup's edges rather than sitting inset from them. */
-  margin-left: -16px;
-  margin-right: -16px;
-  margin-bottom: -10px;
   padding: 5px 16px calc(5px + env(safe-area-inset-bottom, 0px));
   background: var(--bg);
   border-top: 1px solid var(--border);
