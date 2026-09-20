@@ -10,11 +10,16 @@
  * virtual one such as Xvfb in CI (`ci.yml` runs this suite under `xvfb-run`).
  *
  * There is no background service worker in v1.0 to read the id from (`context
- * .serviceWorkers()` would stay empty), so it is read out of the profile's own
- * `Preferences` file instead, matched by the extension's install path.
+ * .serviceWorkers()` would stay empty). An earlier version of this fixture read
+ * the id out of the profile's own `Preferences` file instead, but that file is
+ * written to disk asynchronously and isn't there yet by the time a short wait
+ * elapses (seen as a flaky ENOENT in CI) — chrome://extensions reflects the
+ * command-line-loaded extension immediately, with no disk-flush race, so it's
+ * read from there instead, with a short poll for the page's own Polymer
+ * components to finish rendering.
  * @module tests/e2e/fixtures
  */
-import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
+import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { test as base, chromium } from '@playwright/test';
@@ -37,20 +42,29 @@ export const test = base.extend({
     await use(context);
     await context.close();
   },
-  extensionId: async ({ context, userDataDir }, use) => {
-    // Give the profile a moment to flush extensions.settings to disk.
+  extensionId: async ({ context }, use) => {
     const page = await context.newPage();
-    await page.waitForTimeout(500);
-    await page.close();
+    await page.goto('chrome://extensions');
 
-    const prefsPath = join(userDataDir, 'Default', 'Preferences');
-    const prefs = JSON.parse(readFileSync(prefsPath, 'utf8'));
-    const settings = prefs.extensions?.settings ?? {};
-    const entry = Object.entries(settings).find(
-      ([, value]) => value.path && value.path.toLowerCase() === DIST_DIR.toLowerCase(),
-    );
-    if (!entry) throw new Error(`Extension not found in ${prefsPath} (path ${DIST_DIR})`);
-    await use(entry[0]);
+    /** @returns {Promise<string | null>} */
+    const readId = () =>
+      page.evaluate(() => {
+        const manager = document.querySelector('extensions-manager');
+        const list = manager?.shadowRoot?.querySelector('extensions-item-list');
+        const item = list?.shadowRoot?.querySelector('extensions-item');
+        return item?.getAttribute('id') ?? null;
+      });
+
+    let id = null;
+    const deadline = Date.now() + 15_000;
+    while (!id && Date.now() < deadline) {
+      id = await readId();
+      if (!id) await page.waitForTimeout(200);
+    }
+    if (!id) throw new Error('Extension id not found on chrome://extensions after 15s');
+
+    await page.close();
+    await use(id);
   },
 });
 
