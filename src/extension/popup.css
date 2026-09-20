@@ -283,7 +283,22 @@ body {
 /* The boarding pass, condensed: the website sized this as a hero result on its
    own page; the popup needs it to share ~600px with the inputs above it. */
 .pass-band {
-  padding: 5px 12px;
+  padding: 5px 10px;
+  gap: 8px;
+}
+
+/* The band title's letter-spacing is a per-character cost that adds up on
+   longer translations ("Онлайн-реєстрація відкривається" vs "ONLINE CHECK-IN
+   OPENS") — at the website's spacing/size the title and the countdown pill
+   next to it stop fitting on one line in Ukrainian and the band wraps to two,
+   which is both taller and looks broken (the mockup always shows one line). */
+.pass-band-title {
+  font-size: 9.5px;
+  letter-spacing: 0.04em;
+}
+
+.pill-countdown {
+  font-size: 11px;
 }
 
 .pass-hero {
