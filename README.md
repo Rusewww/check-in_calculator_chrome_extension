@@ -3,6 +3,8 @@
 Find out exactly when online check-in opens for your flight, in the airport's time zone
 and in yours — from the browser toolbar, with no tab to open and nothing sent anywhere.
 
+**[Get it from the Chrome Web Store](https://chromewebstore.google.com/detail/check-in-calculator/oifiigbmkgoojkfdjbkpknkgemgcgeog)**
+
 Website (the same calculator, as a page): https://rusewww.github.io/check-in_calculator/
 
 ## What it does
@@ -35,7 +37,9 @@ no server, no account, no analytics, and no data leaves the device — see
 
 ## Install
 
-Not yet on the Chrome Web Store. To try it from source:
+From the [Chrome Web Store](https://chromewebstore.google.com/detail/check-in-calculator/oifiigbmkgoojkfdjbkpknkgemgcgeog) —
+the usual route. To load an unpacked build from source instead (for development, or to
+try an unreleased change):
 
 ```bash
 npm install
